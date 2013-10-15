@@ -80,5 +80,5 @@
 #define DIAGNOSTICS_TS */
 
 /* NETCDF 4 */
-#define HDF5
-#define DEFLATE
+/*#define HDF5
+  #define DEFLATE*/
