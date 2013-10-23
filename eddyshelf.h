@@ -45,7 +45,6 @@
 
 #define UV_VIS2
 #define TS_DIF2
-
 #endif
 
 /*#define UV_SVADVECTION - for shallow, well resolved domains*/
@@ -58,8 +57,8 @@
 #define EDDY_SPONGE
 #define EDDY_SPONGE_EAST
 #define EDDY_SPONGE_NORTH
-/*#define EDDY_SPONGE_SOUTH
-  #define EDDY_SPONGE_WEST*/
+#define EDDY_SPONGE_SOUTH
+/*#define EDDY_SPONGE_WEST*/
 
 /*#define TS_FIXED - diagnostic spinup*/
 
@@ -80,5 +79,5 @@
 #define DIAGNOSTICS_TS */
 
 /* NETCDF 4 */
-/*#define HDF5
-  #define DEFLATE*/
+#define HDF5
+#define DEFLATE

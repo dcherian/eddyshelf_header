@@ -249,315 +249,137 @@
       XX = xl(ng)
       YY = el(ng)
       eps=1E-9
+      
+      print *,'maxval(xr) = ', XX
+      print *,'maxval(yr) = ', YY
 
 #if defined UV_VIS4
-!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++==UV_VIS4
+      maxvisc=sqrt(maxvisc)
+#endif
+#if defined TS_DIF4
+      maxdiff=sqrt(maxdiff)
+#endif
+
+! cff contains value between 0 and 1 in sponge region
+! multiply by maxvisc / maxdiff later and assign to appropriate array
+      IF (width .gt. eps) THEN
+      DO j=JstrR,JendR
+        DO i=IstrR,IendR
+           cff = 0.0d0
 #if defined EDDY_SPONGE_SOUTH
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
             IF (yr(i,j) .lt. width) THEN
-              cff=visc4(ng) + (width-yr(i,j))*fac*sqrt(bvisc)/width
-              visc4_r(i,j)=cff
-              visc4_p(i,j)=cff
-            ELSE
-              visc4_r(i,j)=visc4(ng)
-              visc4_p(i,j)=visc4(ng)
+              cff=(width-yr(i,j))/width
             END IF
-        END DO
-      END DO
-      END IF
-# endif !  EDDY_SPONGE_SOUTH
-
-#if defined EDDY_SPONGE_EAST
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
-            IF (xr(i,j) .gt. (XX-width)) THEN
-              cff=visc4(ng) + (xr(i,j)+width-XX)*fac*sqrt(bvisc)/width
-              visc4_r(i,j)=cff
-              visc4_p(i,j)=cff
-            ELSE
-              visc4_r(i,j)=visc4(ng)
-              visc4_p(i,j)=visc4(ng)
-            END IF
-        END DO
-      END DO
-      END IF
-#endif ! EDDY_SPONGE_EAST
-
-WRITE (*,*) 'visc4(ng) = ', visc4(ng), 'max visc = ', maxval(visc4_r)
-
-#endif ! UV_VIS4
-
-
-#if defined UV_VIS2
-!+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++UV_VIS2
-print *,'maxval(xr) = ', XX
-print *,'maxval(yr) = ', YY
-
-#if defined EDDY_SPONGE_SOUTH
-!++SOUTH
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
-            IF (yr(i,j) .lt. width) THEN
-              cff=visc2(ng) + (width-yr(i,j))*maxvisc/width
-              IF (cff .gt. maxvisc) THEN
-                 cff = maxvisc;
-              END IF
-              visc2_r(i,j)=cff
-              visc2_p(i,j)=cff
-            ELSE
-              visc2_r(i,j)=visc2(ng)
-              visc2_p(i,j)=visc2(ng)
-            END IF
-        END DO
-      END DO
-      END IF
-# endif !  EDDY_SPONGE_SOUTH
+#endif ! EDDY_SPONGE_SOUTH
 
 #if defined EDDY_SPONGE_NORTH
-!++NORTH
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
             IF (yr(i,j) .gt. YY-width) THEN
-              cff=visc2(ng) + (yr(i,j)+width-YY)*maxvisc/width
-              IF (cff .gt. maxvisc) THEN
-                 cff = maxvisc;
-              END IF
-              visc2_r(i,j)=cff
-              visc2_p(i,j)=cff
-            ELSE
-              visc2_r(i,j)=visc2(ng)
-              visc2_p(i,j)=visc2(ng)
+              cff=(yr(i,j)+width-YY)/width
             END IF
-        END DO
-      END DO
-      END IF
-# endif !  EDDY_SPONGE_NORTH
+#endif
 
 #if defined EDDY_SPONGE_EAST
-!++EAST
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
             IF (xr(i,j) .gt. (XX-width)) THEN
-              cff=visc2(ng) + (xr(i,j)+width-XX)*maxvisc/width
-              IF (cff .gt. maxvisc) THEN
-                 cff = maxvisc;
-              END IF
-              visc2_r(i,j)=cff
-              visc2_p(i,j)=cff
-            ELSE
-              visc2_r(i,j)=visc2(ng)
-              visc2_p(i,j)=visc2(ng)
+              cff=(xr(i,j)+width-XX)/width
             END IF
-        END DO
-      END DO
-      END IF
-#endif ! EDDY_SPONGE_EAST
+#endif
 
 #if defined EDDY_SPONGE_WEST
-!++WEST
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
             IF (xr(i,j) .lt. width) THEN
-              cff=visc2(ng) + (width-xr(i,j))*maxvisc/width
-              IF (cff .gt. maxvisc) THEN
-                 cff = maxvisc;
-              END IF
-              visc2_r(i,j)=cff
-              visc2_p(i,j)=cff
-            ELSE
-              visc2_r(i,j)=visc2(ng)
-              visc2_p(i,j)=visc2(ng)
+              cff=(width-xr(i,j))/width
             END IF
-        END DO
-      END DO
-      END IF
-# endif !  EDDY_SPONGE_WEST
+#endif
+!
+! deal with corners - needed with parallel
+!
+#if defined EDDY_SPONGE_NORTH && defined EDDY_SPONGE_EAST
+            IF (xr(i,j) .gt. (XX-width)) THEN
+               IF (yr(i,j) .gt. (YY-width)) THEN
+                  cff = (yr(i,j)+width-YY)/width +              &
+     &                  (xr(i,j)+width-XX)/width
+               END IF
+            END IF
+#endif
+#if defined EDDY_SPONGE_SOUTH && defined EDDY_SPONGE_EAST
+            IF (xr(i,j) .gt. (XX-width)) THEN
+               IF (yr(i,j) .lt. (width)) THEN
+                  cff = (width-yr(i,j))/width +              &
+     &                  (xr(i,j)+width-XX)/width
+               END IF
+            END IF
+#endif
+#if defined EDDY_SPONGE_NORTH && defined EDDY_SPONGE_WEST
+            IF (xr(i,j) .lt. (width)) THEN
+               IF (yr(i,j) .gt. (YY-width)) THEN
+                  cff = (width+yr(i,j)-YY)/width +              &
+     &                  (width-xr(i,j))/width
+               END IF
+            END IF
+#endif
+#if defined EDDY_SPONGE_SOUTH && defined EDDY_SPONGE_WEST
+            IF (xr(i,j) .lt. (width)) THEN
+               IF (yr(i,j) .lt. (width)) THEN
+                  cff = (width-yr(i,j))/width +              &
+     &                  (width-xr(i,j))/width
+               END IF
+            END IF
+#endif
 
-print *,'tile = ',tile,'maxval(visc2_r) = ', maxval(visc2_r)
-print *,'tile = ',tile,'maxval(visc2_p) = ', maxval(visc2_p)
-
-#  endif ! UV_VIS2
-
+! assign to viscosity and diffusivity arrays
+#if defined UV_VIS2
+            visc2_r(i,j) = cff*maxvisc + visc2(ng)
+            visc2_p(i,j) = cff*maxvisc + visc2(ng)
+            IF (visc2_r(i,j) .gt. maxvisc) THEN
+               visc2_r(i,j) = maxvisc
+               visc2_p(i,j) = maxvisc
+            END IF
+#endif
+#if defined UV_VIS4
+            visc4_r(i,j) = cff*maxvisc + visc4(ng)
+            visc4_p(i,j) = cff*maxvisc + visc4(ng)
+            IF (visc4_r(i,j) .gt. maxvisc) THEN
+               visc4_r(i,j) = maxvisc
+               visc4_p(i,j) = maxvisc
+            END IF
+#endif
 #if defined TS_DIF2
-!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++TS_DIF2    
-#if defined EDDY_SPONGE_SOUTH 
-!++SOUTH
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
-            IF (yr(i,j) .lt. width) THEN
-              cff=(width-yr(i,j))*maxdiff/width
-              IF (cff .gt. maxdiff) THEN
-                 cff = maxdiff;
-              END IF
-              diff2(i,j,itemp)=cff+tnu2(itemp,ng)
-              diff2(i,j,isalt)=cff+tnu2(isalt,ng)
-            ELSE
-              diff2(i,j,itemp)=tnu2(itemp,ng)
-              diff2(i,j,isalt)=tnu2(isalt,ng)
+            diff2(i,j,itemp) = cff*maxdiff + tnu2(itemp,ng)
+            diff2(i,j,isalt) = cff*maxdiff + tnu2(isalt,ng)
+            IF (diff2(i,j,itemp) .gt. maxdiff) THEN
+               diff2(i,j,itemp) = maxdiff
+               diff2(i,j,isalt) = maxdiff
             END IF
-        END DO
-      END DO
-      END IF
-#endif !EDDY_SPONGE_SOUTH
-
-#if defined EDDY_SPONGE_NORTH
-!++NORTH
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
-            IF (yr(i,j) .gt. YY-width) THEN
-              cff=visc2(ng) + (yr(i,j)+width-YY)*maxdiff/width
-              IF (cff .gt. maxdiff) THEN
-                 cff = maxdiff;
-              END IF
-              diff2(i,j,itemp)=cff+tnu2(itemp,ng)
-              diff2(i,j,isalt)=cff+tnu2(isalt,ng)
-            ELSE
-              diff2(i,j,itemp)=tnu2(itemp,ng)
-              diff2(i,j,isalt)=tnu2(isalt,ng)
-            END IF
-        END DO
-      END DO
-      END IF
-# endif !  EDDY_SPONGE_NORTH
-
-#if defined EDDY_SPONGE_EAST
-!++EAST
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
-            IF (xr(i,j) .gt. (XX-width)) THEN
-              cff=(xr(i,j)+width-XX)*maxdiff/width
-              IF (cff .gt. maxdiff) THEN
-                 cff = maxdiff;
-              END IF
-              diff2(i,j,itemp)=cff+tnu2(itemp,ng)
-              diff2(i,j,isalt)=cff+tnu2(isalt,ng)
-            ELSE
-              diff2(i,j,itemp)=tnu2(itemp,ng)
-              diff2(i,j,isalt)=tnu2(isalt,ng)
-            END IF
-        END DO
-      END DO
-      END IF
-#endif ! EDDY_SPONGE_EAST
-
-    
-#if defined EDDY_SPONGE_WEST 
-!++WEST
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
-            IF (xr(i,j) .lt. width) THEN
-              cff=(width-yr(i,j))*maxdiff/width
-              IF (cff .gt. maxdiff) THEN
-                 cff = maxdiff;
-              END IF
-              diff2(i,j,itemp)=cff+tnu2(itemp,ng)
-              diff2(i,j,isalt)=cff+tnu2(isalt,ng)
-            ELSE
-              diff2(i,j,itemp)=tnu2(itemp,ng)
-              diff2(i,j,isalt)=tnu2(isalt,ng)
-            END IF
-        END DO
-      END DO
-      END IF
-#endif !EDDY_SPONGE_WEST
-
-print *,'tile = ',tile,'maxval(diff2) = ', maxval(diff2)
-
-#endif !TS_DIF2
-
+#endif
 #if defined TS_DIF4
-!++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++TS_DIF4
-#if defined EDDY_SPONGE_SOUTH 
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
-            IF (yr(i,j) .lt. width) THEN
-              cff=(width-yr(i,j))*fac*sqrt(bdiff)/width
-!              print *,'cff = ', cff
-!              print *,'maxval(yr) = ', maxval(yr)
-              diff4(i,j,itemp)=cff+tnu4(itemp,ng)
-              diff4(i,j,isalt)=cff+tnu4(isalt,ng)
-            ELSE
-              diff4(i,j,itemp)=tnu4(itemp,ng)
-              diff4(i,j,isalt)=tnu4(isalt,ng)
+            diff4(i,j,itemp) = cff*maxdiff + tnu4(itemp,ng)
+            diff4(i,j,isalt) = cff*maxdiff + tnu4(isalt,ng)
+            IF (diff4(i,j,itemp) .gt. maxdiff) THEN
+               diff4(i,j,itemp) = maxdiff
+               diff4(i,j,isalt) = maxdiff
             END IF
-        END DO
-      END DO
-      END IF
-#endif !EDDY_SPONGE_SOUTH
+#endif
 
-#if defined EDDY_SPONGE_EAST
-      IF (width .gt. eps) THEN
-      DO j=JstrR,JendR
-        DO i=IstrR,IendR
-            IF (xr(i,j) .gt. (XX-width)) THEN
-              cff=(xr(i,j)+width-XX)*fac*sqrt(bdiff)/width
-              diff4(i,j,itemp)=cff+tnu4(itemp,ng)
-              diff4(i,j,isalt)=cff+tnu4(isalt,ng)
-            ELSE
-              diff4(i,j,itemp)=tnu4(itemp,ng)
-              diff4(i,j,isalt)=tnu4(isalt,ng)
-            END IF
-        END DO
-      END DO
+         END DO
+         END DO
       END IF
-#endif ! EDDY_SPONGE_EAST
-      WRITE (*,*) 'temp: tnu4(ng) = ', tnu4(itemp,ng),                  &
-                   'max tnu = ', maxval(diff4)
-#endif ! TS_DIF4
+! diagnostic output
+!#if defined UV_VIS2
+!      print *,'tile = ',tile,'maxval(visc2_r) = ', maxval(visc2_r)
+!      print *,'tile = ',tile,'maxval(visc2_p) = ', maxval(visc2_p)
+!#endif
+!#if defined UV_VIS4
+!      print *,'tile = ',tile,'maxval(visc4_r) = ', maxval(visc4_r)
+!      print *,'tile = ',tile,'maxval(visc4_p) = ', maxval(visc4_p)
+!#endif
+#if defined TS_DIF2
+      print *,'tile = ',tile,'maxval(diff2) = ', maxval(diff2)
+#endif
+#if defined TS_DIF4
+      print *,'tile = ',tile,'maxval(diff4) = ', maxval(diff4)
+#endif
 
 #endif ! EDDY_SPONGE
 
-! SPARE CODE
-!      DO j=JstrR,JendR
-!        DO i=IstrR,MIN(10,IendR)
-!          cff=visc2(ng) +REAL(10-i,r8)*(fac*visc2(ng)-visc2(ng))/10.0_r8
-!          visc2_r(i,j)=cff
-!          visc2_p(i,j)=cff
-!        END DO
-!        DO i=MAX(IstrR,11),IendR-10
-!          visc2_r(i,j)=visc2(ng)
-!          visc2_p(i,j)=visc2(ng)
-!        END DO
-!        DO i=IendR-9,IendR
-!          cff=visc2(ng)+REAL(i-IendR+9,r8)*                            &
-!     &      (fac*visc2(ng)-visc2(ng))/10.0_r8
-!          visc2_r(i,j)=cff
-!          visc2_p(i,j)=cff
-!        END DO
-!      END D
-!      DO j=JstrR,JendR
-!        DO i=IstrR,MIN(10,IendR)
-!          cff=tnu2(itemp,ng)+REAL(10-i,r8)*(fac*tnu2(itemp,ng)          &
-!     &              -tnu2(itemp,ng))/10.0_r8
-!          diff2(i,j,itemp)=cff
-!          diff2(i,j,isalt)=cff
-!        END DO
-!        DO i=MAX(IstrR,11),IendR-10
-!          diff2(i,j,itemp)=tnu2(itemp,ng)
-!          diff2(i,j,isalt)=tnu2(isalt,ng)
-!        END DO
-!        DO i=IendR-9,IendR
-!          cff=tnu2(itemp,ng) + REAL(i-IendR+19,r8)*(fac*tnu2(itemp,ng) - &
-!     &             tnu2(itemp,ng))/10.0_r8
-!          diff2(i,j,itemp)=cff
-!          diff2(i,j,isalt)=cff
-!        END DO
-!      END DO 
-! yr(IendR,1)
-
-!+++++++++++++++++++++++++++ END EDDY_SPONGE
 # if defined ADRIA02
 !
 !  Adriatic Sea southern sponge areas.
