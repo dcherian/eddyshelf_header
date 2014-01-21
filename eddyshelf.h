@@ -39,8 +39,9 @@
 
 #else
 
-#define TS_A4HADVECTION
-#define TS_A4VADVECTION
+/*#define TS_A4HADVECTION
+  #define TS_A4VADVECTION*/
+#define TS_MPDATA /* Horizontal advection for T,S */
 #define UV_C3HADVECTION
 
 #define UV_VIS2
@@ -48,7 +49,6 @@
 #endif
 
 /*#define UV_SVADVECTION - for shallow, well resolved domains*/
-/*#define TS_MPDATA /* Horizontal advection for T,S */
 
 /* Viscosity & sponges */
 #define UV_QDRAG
@@ -57,13 +57,13 @@
 #define EDDY_SPONGE
 #define EDDY_SPONGE_EAST
 #define EDDY_SPONGE_NORTH
-#define EDDY_SPONGE_SOUTH
-/*#define EDDY_SPONGE_WEST*/
+/*#define EDDY_SPONGE_SOUTH*/
+#define EDDY_SPONGE_WEST
 
 /*#define TS_FIXED - diagnostic spinup*/
 
 /* Passive Tracer */
-/*#define T_PASSIVE
+#define T_PASSIVE
 #define ANA_SPFLUX
 #define ANA_BPFLUX 
 
@@ -76,7 +76,7 @@
 /* Outputs */
 #define AVERAGES
 /*#define DIAGNOSTICS_UV
-#define DIAGNOSTICS_TS */
+#define DIAGNOSTICS_TS*/
 
 /* NETCDF 4 */
 #define HDF5

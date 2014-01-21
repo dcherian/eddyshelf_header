@@ -114,6 +114,7 @@
       real(r8), intent(in) :: grdscl(LBi:,LBj:)
       real(r8), intent(in) :: xr(LBi:,LBj:)
       real(r8), intent(in) :: yr(LBi:,LBj:)
+!      real(r8), intent(in) :: pm(LBi:,LBj:)
 # ifdef SOLVE3D
 #  ifdef TS_DIF2
       real(r8), intent(inout) :: diff2(LBi:,LBj:,:)
@@ -134,6 +135,7 @@
       real(r8), intent(in) :: grdscl(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: xr(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: yr(LBi:UBi,LBj:UBj)
+      real(r8), intent(in) :: pm(LBi:UBi,LBj:UBj)
 # ifdef SOLVE3D
 #  ifdef TS_DIF2
       real(r8), intent(inout) :: diff2(LBi:UBi,LBj:UBj,NT(ng))
@@ -156,7 +158,7 @@
 !
       integer :: Iwrk, i, j, itrc
       real(r8) :: cff, cff1, cff2, width, eps, XX, YY
-      real(r8) :: maxdiff,maxvisc
+      real(r8) :: maxdiff,maxvisc,dx
 #ifdef WC13
       real(r8) :: cff_t, cff_s, cff1_t, cff2_t, cff1_s, cff2_s
 #endif
@@ -242,14 +244,18 @@
 !! by increasing its horizontal mixing coefficients.
 !!
 #if defined EDDY_SPONGE
-!     Convert width of sponge to metres first
-      width=USER(1)*1000
-      maxvisc=USER(2);
-      maxdiff=USER(3);
+!     Convert width (in points)  of sponge to metres first
+! assuming square grid
+      dx = 1000
+
+      width=USER(1)*dx
+      maxvisc=USER(2)
+      maxdiff=USER(3)
       XX = xl(ng)
       YY = el(ng)
       eps=1E-9
       
+      print *,'dx = ', dx,' | sponge width = ', width
       print *,'maxval(xr) = ', XX
       print *,'maxval(yr) = ', YY
 
