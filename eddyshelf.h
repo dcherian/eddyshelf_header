@@ -70,8 +70,10 @@
 /* Mixing */
 #define MIX_GEO_UV
 #define MIX_GEO_TS
-#define GLS_MIXING 
-#define KANTHA_CLAYSON
+/*#define MY25_MIXING */
+#define GLS_MIXING
+/*#define KANTHA_CLAYSON*/
+#define CANUTO_A
 
 /* Outputs */
 #define AVERAGES
