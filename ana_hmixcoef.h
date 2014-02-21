@@ -255,9 +255,9 @@
       YY = el(ng)
       eps=1E-9
       
-      print *,'dx = ', dx,' | sponge width = ', width
-      print *,'maxval(xr) = ', XX
-      print *,'maxval(yr) = ', YY
+!      print *,'dx = ', dx,' | sponge width = ', width
+!      print *,'maxval(xr) = ', XX
+!      print *,'maxval(yr) = ', YY
 
 #if defined UV_VIS4
       maxvisc=sqrt(maxvisc)
@@ -377,12 +377,12 @@
 !      print *,'tile = ',tile,'maxval(visc4_r) = ', maxval(visc4_r)
 !      print *,'tile = ',tile,'maxval(visc4_p) = ', maxval(visc4_p)
 !#endif
-#if defined TS_DIF2
-      print *,'tile = ',tile,'maxval(diff2) = ', maxval(diff2)
-#endif
-#if defined TS_DIF4
-      print *,'tile = ',tile,'maxval(diff4) = ', maxval(diff4)
-#endif
+!#if defined TS_DIF2
+!      print *,'tile = ',tile,'maxval(diff2) = ', maxval(diff2)
+!#endif
+!#if defined TS_DIF4
+!      print *,'tile = ',tile,'maxval(diff4) = ', maxval(diff4)
+!#endif
 
 #endif ! EDDY_SPONGE
 

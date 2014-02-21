@@ -26,6 +26,8 @@
 #define FLOAT_VWALK
 #define FLOAT_STICKY
 
+#define DC_FLOATS_DEPLOYMENT
+
 /* Advection Schemes */
 
 #undef SPLIT_SCHEME
@@ -39,9 +41,9 @@
 
 #else
 
-/*#define TS_A4HADVECTION
-  #define TS_A4VADVECTION*/
-#define TS_MPDATA /* Horizontal advection for T,S */
+#define TS_A4HADVECTION
+#define TS_A4VADVECTION
+/*#define TS_MPDATA /* Horizontal advection for T,S */
 #define UV_C3HADVECTION
 
 #define UV_VIS2
