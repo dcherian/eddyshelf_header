@@ -158,7 +158,7 @@
 !
       integer :: Iwrk, i, j, itrc
       real(r8) :: cff, cff1, cff2, width, eps, XX, YY
-      real(r8) :: maxdiff,maxvisc,dx
+      real(r8) :: maxdiff,maxvisc,tokm
 #ifdef WC13
       real(r8) :: cff_t, cff_s, cff1_t, cff2_t, cff1_s, cff2_s
 #endif
@@ -246,9 +246,9 @@
 #if defined EDDY_SPONGE
 !     Convert width (in points)  of sponge to metres first
 ! assuming square grid
-      dx = 1000
+      tokm = 1000
 
-      width=USER(1)*dx
+      width=USER(1)*tokm
       maxvisc=USER(2)
       maxdiff=USER(3)
       XX = xl(ng)
