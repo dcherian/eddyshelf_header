@@ -56,6 +56,7 @@
 #define ANA_DRAG
 #define UV_DRAG_GRID
 #define UV_LDRAG
+#define LIMIT_BSTRESS
 
 #define SPONGE
 #define EDDY_SPONGE
