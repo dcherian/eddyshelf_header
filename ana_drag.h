@@ -169,8 +169,9 @@
       width = USER(1)*tokm
       maxrdrg = USER(4)
       XX = xl(ng)
-      YY = yl(ng)
+      YY = el(ng)
       eps=1E-9
+
 # if defined UV_LOGDRAG
       DO j=JstrT,JendT
         DO i=IstrT,IendT
@@ -182,8 +183,8 @@
         DO i=IstrT,IendT
            cff=0
 #if defined EDDY_SPONGE_NORTH
-           IF (yr(i,j) .gt. YY-width) THEN
-              cff=(yr(i,j)+width-YY)/width
+           IF (GRID(ng)%yr(i,j) .gt. YY-width) THEN
+              cff=(GRID(ng)%yr(i,j)+width-YY)/width
            END IF
 #endif
           rdrag(i,j)=cff*maxrdrg+rdrg(ng)
@@ -194,8 +195,8 @@
         DO i=IstrT,IendT
            cff=0
 #if defined EDDY_SPONGE_NORTH
-           IF (yr(i,j) .gt. YY-width) THEN
-              cff=(yr(i,j)+width-YY)/width
+           IF (GRID(ng)%yr(i,j) .gt. YY-width) THEN
+              cff=(GRID(ng)%yr(i,j)+width-YY)/width
            END IF
 #endif
           rdrag2(i,j)=cff*maxrdrg+rdrg2(ng)
@@ -203,6 +204,7 @@
         END DO
       END DO
 # endif
+#endif
 #endif
 !
 !  Exchange boundary data.

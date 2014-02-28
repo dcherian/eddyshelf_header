@@ -53,7 +53,9 @@
 /*#define UV_SVADVECTION - for shallow, well resolved domains*/
 
 /* Viscosity & sponges */
-#define UV_QDRAG
+#define ANA_DRAG
+#define UV_DRAG_GRID
+#define UV_LDRAG
 
 #define SPONGE
 #define EDDY_SPONGE
