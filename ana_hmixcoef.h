@@ -157,8 +157,11 @@
 !  Local variable declarations.
 !
       integer :: Iwrk, i, j, itrc
-      real(r8) :: cff, cff1, cff2, width, eps, XX, YY
+      real(r8) :: cff, cff1, cff2
+#if defined DC_SPONGE
+      real(r8) :: width, eps, XX, YY
       real(r8) :: maxdiff,maxvisc,tokm
+#endif
 #ifdef WC13
       real(r8) :: cff_t, cff_s, cff1_t, cff2_t, cff1_s, cff2_s
 #endif
@@ -243,7 +246,7 @@
 !! User modifiable section.  Please specify the appropiate sponge area
 !! by increasing its horizontal mixing coefficients.
 !!
-#if defined EDDY_SPONGE
+#if defined DC_SPONGE
 !     Convert width (in points)  of sponge to metres first
 ! assuming square grid
       tokm = 1000
@@ -272,25 +275,25 @@
       DO j=JstrR,JendR
         DO i=IstrR,IendR
            cff = 0.0d0
-#if defined EDDY_SPONGE_SOUTH
+#if defined DC_SPONGE_SOUTH
             IF (yr(i,j) .lt. width) THEN
               cff=(width-yr(i,j))/width
             END IF
-#endif ! EDDY_SPONGE_SOUTH
+#endif ! DC_SPONGE_SOUTH
 
-#if defined EDDY_SPONGE_NORTH
+#if defined DC_SPONGE_NORTH
             IF (yr(i,j) .gt. YY-width) THEN
               cff=(yr(i,j)+width-YY)/width
             END IF
 #endif
 
-#if defined EDDY_SPONGE_EAST
+#if defined DC_SPONGE_EAST
             IF (xr(i,j) .gt. (XX-width)) THEN
               cff=(xr(i,j)+width-XX)/width
             END IF
 #endif
 
-#if defined EDDY_SPONGE_WEST
+#if defined DC_SPONGE_WEST
             IF (xr(i,j) .lt. width) THEN
               cff=(width-xr(i,j))/width
             END IF
@@ -298,7 +301,7 @@
 !
 ! deal with corners - needed with parallel
 !
-#if defined EDDY_SPONGE_NORTH && defined EDDY_SPONGE_EAST
+#if defined DC_SPONGE_NORTH && defined DC_SPONGE_EAST
             IF (xr(i,j) .gt. (XX-width)) THEN
                IF (yr(i,j) .gt. (YY-width)) THEN
                   cff = (yr(i,j)+width-YY)/width +              &
@@ -306,7 +309,7 @@
                END IF
             END IF
 #endif
-#if defined EDDY_SPONGE_SOUTH && defined EDDY_SPONGE_EAST
+#if defined DC_SPONGE_SOUTH && defined DC_SPONGE_EAST
             IF (xr(i,j) .gt. (XX-width)) THEN
                IF (yr(i,j) .lt. (width)) THEN
                   cff = (width-yr(i,j))/width +              &
@@ -314,7 +317,7 @@
                END IF
             END IF
 #endif
-#if defined EDDY_SPONGE_NORTH && defined EDDY_SPONGE_WEST
+#if defined DC_SPONGE_NORTH && defined DC_SPONGE_WEST
             IF (xr(i,j) .lt. (width)) THEN
                IF (yr(i,j) .gt. (YY-width)) THEN
                   cff = (width+yr(i,j)-YY)/width +              &
@@ -322,7 +325,7 @@
                END IF
             END IF
 #endif
-#if defined EDDY_SPONGE_SOUTH && defined EDDY_SPONGE_WEST
+#if defined DC_SPONGE_SOUTH && defined DC_SPONGE_WEST
             IF (xr(i,j) .lt. (width)) THEN
                IF (yr(i,j) .lt. (width)) THEN
                   cff = (width-yr(i,j))/width +              &
@@ -384,7 +387,7 @@
 !      print *,'tile = ',tile,'maxval(diff4) = ', maxval(diff4)
 !#endif
 
-#endif ! EDDY_SPONGE
+#endif ! DC_SPONGE
 
 # if defined ADRIA02
 !
