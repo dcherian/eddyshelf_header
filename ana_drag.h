@@ -164,7 +164,7 @@
       END DO
 # endif
 #else
-# if defined EDDY_SPONGE
+# if defined DC_SPRDRG
       tokm = 1000;
       width = USER(1)*tokm
       maxrdrg = USER(4)
@@ -172,38 +172,89 @@
       YY = el(ng)
       eps=1E-9
 
-# if defined UV_LOGDRAG
-      DO j=JstrT,JendT
-        DO i=IstrT,IendT
-          ZoBot(i,j)=???
-        END DO
-      END DO
-# elif defined UV_LDRAG
-      DO j=JstrT,JendT
-        DO i=IstrT,IendT
-           cff=0
-#if defined EDDY_SPONGE_NORTH
-           IF (GRID(ng)%yr(i,j) .gt. YY-width) THEN
-              cff=(GRID(ng)%yr(i,j)+width-YY)/width
-           END IF
-#endif
-          rdrag(i,j)=cff*maxrdrg+rdrg(ng)
-        END DO
-      END DO
-# elif defined UV_QDRAG
-      DO j=JstrT,JendT
-        DO i=IstrT,IendT
-           cff=0
-#if defined EDDY_SPONGE_NORTH
-           IF (GRID(ng)%yr(i,j) .gt. YY-width) THEN
-              cff=(GRID(ng)%yr(i,j)+width-YY)/width
-           END IF
-#endif
-          rdrag2(i,j)=cff*maxrdrg+rdrg2(ng)
+      IF (width .gt. eps) THEN
+         DO j=JstrT,JendT
+            DO i=IstrT,IendT
+               cff=0
+#if defined DC_SPRDRG_SOUTH
+            IF (GRID(ng)%yr(i,j) .lt. width) THEN
+              cff=(width-GRID(ng)%yr(i,j))/width
+            END IF
+#endif ! DC_SPRDRG_SOUTH
 
-        END DO
-      END DO
-# endif
+#if defined DC_SPRDRG_NORTH
+            IF (GRID(ng)%yr(i,j) .gt. YY-width) THEN
+              cff=(GRID(ng)%yr(i,j)+width-YY)/width
+            END IF
+#endif
+
+#if defined DC_SPRDRG_EAST
+            IF (GRID(ng)%xr(i,j) .gt. (XX-width)) THEN
+              cff=(GRID(ng)%xr(i,j)+width-XX)/width
+            END IF
+#endif
+
+#if defined DC_SPRDRG_WEST
+            IF (GRID(ng)%xr(i,j) .lt. width) THEN
+              cff=(width-GRID(ng)%xr(i,j))/width
+            END IF
+#endif
+!
+! deal with corners - needed with parallel
+!
+#if defined DC_SPRDRG_NORTH && defined DC_SPRDRG_EAST
+            IF (GRID(ng)%xr(i,j) .gt. (XX-width)) THEN
+               IF (GRID(ng)%yr(i,j) .gt. (YY-width)) THEN
+                  cff = (GRID(ng)%yr(i,j)+width-YY)/width +              &
+     &                  (GRID(ng)%xr(i,j)+width-XX)/width
+               END IF
+            END IF
+#endif
+#if defined DC_SPRDRG_SOUTH && defined DC_SPRDRG_EAST
+            IF (GRID(ng)%xr(i,j) .gt. (XX-width)) THEN
+               IF (GRID(ng)%yr(i,j) .lt. (width)) THEN
+                  cff = (width-GRID(ng)%yr(i,j))/width +              &
+     &                  (GRID(ng)%xr(i,j)+width-XX)/width
+               END IF
+            END IF
+#endif
+#if defined DC_SPRDRG_NORTH && defined DC_SPRDRG_WEST
+            IF (GRID(ng)%xr(i,j) .lt. (width)) THEN
+               IF (GRID(ng)%yr(i,j) .gt. (YY-width)) THEN
+                  cff = (width+GRID(ng)%yr(i,j)-YY)/width +              &
+     &                  (width-GRID(ng)%xr(i,j))/width
+               END IF
+            END IF
+#endif
+#if defined DC_SPRDRG_SOUTH && defined DC_SPRDRG_WEST
+            IF (GRID(ng)%xr(i,j) .lt. (width)) THEN
+               IF (GRID(ng)%yr(i,j) .lt. (width)) THEN
+                  cff = (width-GRID(ng)%yr(i,j))/width +              &
+     &                  (width-GRID(ng)%xr(i,j))/width
+               END IF
+            END IF
+#endif
+!
+! Assign to bottom friction coeff arrays
+!
+#if defined UV_LDRAG
+            IF (cff .eq. 0) THEN
+               rdrag(i,j)=rdrg(ng)
+            ELSE
+               rdrag(i,j)=MIN(cff*maxrdrg+rdrg(ng),maxrdrg)
+            END IF
+#endif
+#if defined UV_QDRAG
+            IF (cff .eq. 0) THEN
+               rdrag2(i,j)=rdrg2(ng)
+            ELSE
+               rdrag2(i,j)=MIN(cff*maxrdrg+rdrg2(ng),maxrdrg)
+            END IF
+#endif
+            END DO
+         END DO
+      END IF
+
 #endif
 #endif
 !
