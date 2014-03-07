@@ -79,7 +79,7 @@
       real(r8) :: cff1, cff2, cff3
 
 #if defined DC_NUDGING
-      real(r8) :: width, eps, XX, YY, tokm, maxnudg
+      real(r8) :: width, eps, XX, YY, tokm, nudgwidth, totwidth
 #endif
 
       real(r8), parameter :: IniVal = 0.0_r8
@@ -132,72 +132,115 @@
 #elif defined DC_NUDGING
 
       tokm = 1000
-      ! input in days, convert to 1/sec
-      maxnudg = 1/USER(5)/86400
-      width = USER(1)*tokm
+      ! input in km - total width of nudging region
+      totwidth = USER(1)*tokm
+      ! width of constant nudging region
+      nudgwidth = USER(5)*tokm
+      ! width of ramped region
+      width = totwidth-nudgwidth
       XX = xl(ng)
       YY = el(ng)
       eps=1E-9
 
-      IF (width .gt. eps) THEN
+      IF (totwidth .gt. eps) THEN
       DO j=JstrT,JendT
         DO i=IstrT,IendT
            cff1 = 0.0d0
 #if defined DC_NUDGE_SOUTH
-            IF (GRID(ng)%yr(i,j) .lt. width) THEN
-              cff1=(width-GRID(ng)%yr(i,j))/width
+            IF (GRID(ng)%yr(i,j) .lt. totwidth) THEN
+               IF(GRID(ng)%yr(i,j) .lt. nudgwidth) THEN
+                  cff1 = 1
+               ELSE
+                  cff1=(width-(GRID(ng)%yr(i,j)-nudgwidth))/width
+               END IF
             END IF
 #endif ! DC_NUDGE_SOUTH
 
 #if defined DC_NUDGE_NORTH
-            IF (GRID(ng)%yr(i,j) .gt. YY-width) THEN
-              cff1=(GRID(ng)%yr(i,j)+width-YY)/width
+            IF (GRID(ng)%yr(i,j) .gt. YY-totwidth) THEN
+               IF (GRID(ng)%yr(i,j) .gt. YY-nudgwidth) THEN
+                  cff1 = 1
+               ELSE
+                  cff1=(GRID(ng)%yr(i,j)+width-(YY-nudgwidth))/width
+               END IF
             END IF
 #endif
 
 #if defined DC_NUDGE_EAST
-            IF (GRID(ng)%xr(i,j) .gt. (XX-width)) THEN
-              cff1=(GRID(ng)%xr(i,j)+width-XX)/width
+            IF (GRID(ng)%xr(i,j) .gt. (XX-totwidth)) THEN
+               IF (GRID(ng)%xr(i,j) .gt. (XX-nudgwidth)) THEN
+                  cff1 = 1
+               ELSE
+                  cff1=(GRID(ng)%xr(i,j)+width-(XX-nudgwidth))/width
+               END IF
             END IF
 #endif
 
 #if defined DC_NUDGE_WEST
-            IF (GRID(ng)%xr(i,j) .lt. width) THEN
-              cff1=(width-GRID(ng)%xr(i,j))/width
+            IF (GRID(ng)%xr(i,j) .lt. totwidth) THEN
+               IF (GRID(ng)%xr(i,j) .lt. nudgwidth) THEN
+                  cff1 = 1
+               ELSE
+                  cff1=(width-(GRID(ng)%xr(i,j)-nudgwidth))/width
+               END IF
             END IF
 #endif
 !
 ! deal with corners - needed with parallel
 !
 #if defined DC_NUDGE_NORTH && defined DC_NUDGE_EAST
-            IF (GRID(ng)%xr(i,j) .gt. (XX-width)) THEN
-               IF (GRID(ng)%yr(i,j) .gt. (YY-width)) THEN
-                  cff1 = (GRID(ng)%yr(i,j)+width-YY)/width +            &
-     &                  (GRID(ng)%xr(i,j)+width-XX)/width
+            IF ((GRID(ng)%xr(i,j) .gt. (XX-totwidth)) .AND.                    &
+     &           (GRID(ng)%yr(i,j) .gt. (YY-totwidth))) THEN
+               ! constant region
+               IF ((GRID(ng)%xr(i,j) .gt. (XX-nudgwidth)) .OR.               &
+     &          (GRID(ng)%yr(i,j) .gt. (YY-nudgwidth))) THEN
+                  cff1 = 1
+               ! ramp region
+               ELSE
+                  cff1 = (width-(YY-nudgwidth-GRID(ng)%yr(i,j)))/width  &  
+     &                   + (width-(XX-GRID(ng)%xr(i,j)-nudgwidth))/width
                END IF
             END IF
 #endif
 #if defined DC_NUDGE_SOUTH && defined DC_NUDGE_EAST
-            IF (GRID(ng)%xr(i,j) .gt. (XX-width)) THEN
-               IF (GRID(ng)%yr(i,j) .lt. (width)) THEN
-                  cff1 = (width-GRID(ng)%yr(i,j))/width +               &
-     &                  (GRID(ng)%xr(i,j)+width-XX)/width
+            IF ((GRID(ng)%yr(i,j) .lt. totwidth) .AND.                    &
+     &           (GRID(ng)%xr(i,j) .gt. (XX-totwidth))) THEN
+               ! constant region
+               IF ((GRID(ng)%yr(i,j) .lt. nudgwidth) .OR.               &
+     &          (GRID(ng)%xr(i,j) .gt. (XX-nudgwidth))) THEN
+                  cff1 = 1
+               ! ramp region
+               ELSE
+                  cff1 = (width-(XX-nudgwidth-GRID(ng)%xr(i,j)))/width  &  
+     &                   + (width - (GRID(ng)%yr(i,j)-nudgwidth))/width
                END IF
             END IF
 #endif
 #if defined DC_NUDGE_NORTH && defined DC_NUDGE_WEST
-            IF (GRID(ng)%xr(i,j) .lt. (width)) THEN
-               IF (GRID(ng)%yr(i,j) .gt. (YY-width)) THEN
-                  cff1 = (width+GRID(ng)%yr(i,j)-YY)/width +            &
-     &                  (width-GRID(ng)%xr(i,j))/width
+            IF ((GRID(ng)%xr(i,j) .lt. totwidth) .AND.                    &
+     &           (GRID(ng)%yr(i,j) .gt. (YY-totwidth))) THEN
+               ! constant region
+               IF ((GRID(ng)%xr(i,j) .lt. nudgwidth) .OR.               &
+     &          (GRID(ng)%yr(i,j) .gt. (YY-nudgwidth))) THEN
+                  cff1 = 1
+               ! ramp region
+               ELSE
+                  cff1 = (width-(YY-nudgwidth-GRID(ng)%yr(i,j)))/width  &  
+     &                   + (width - (GRID(ng)%xr(i,j)-nudgwidth))/width
                END IF
             END IF
 #endif
 #if defined DC_NUDGE_SOUTH && defined DC_NUDGE_WEST
-            IF (GRID(ng)%xr(i,j) .lt. (width)) THEN
-               IF (GRID(ng)%yr(i,j) .lt. (width)) THEN
-                  cff1 = (width-GRID(ng)%yr(i,j))/width +               &
-     &                  (width-GRID(ng)%xr(i,j))/width
+            IF ((GRID(ng)%yr(i,j) .lt. totwidth) .AND.                    &
+     &           (GRID(ng)%xr(i,j) .lt. totwidth)) THEN
+               ! constant region
+               IF ((GRID(ng)%yr(i,j) .lt. nudgwidth) .OR.               &
+     &          (GRID(ng)%xr(i,j) .lt. nudgwidth)) THEN
+                  cff1 = 1
+               ! ramp region
+               ELSE
+                  cff1 = (width-(GRID(ng)%xr(i,j)-nudgwidth))/width     &  
+     &                   + (width - (GRID(ng)%yr(i,j)-nudgwidth))/width
                END IF
             END IF
 #endif
