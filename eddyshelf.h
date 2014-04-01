@@ -41,9 +41,9 @@
 
 #else
 
-#define TS_A4HADVECTION
-#define TS_A4VADVECTION
-/*#define TS_MPDATA /* Horizontal advection for T,S */
+/*#define TS_A4HADVECTION
+  #define TS_A4VADVECTION*/
+#define TS_MPDATA /* Horizontal advection for T,S */
 #define UV_C3HADVECTION
 
 #define UV_VIS2
@@ -53,19 +53,34 @@
 /*#define UV_SVADVECTION - for shallow, well resolved domains*/
 
 /* Viscosity & sponges */
-#define ANA_DRAG
-#define UV_DRAG_GRID
 #define UV_LDRAG
+/*#define ANA_DRAG
+#define UV_DRAG_GRID
 #define LIMIT_BSTRESS
 
+#define DC_SPRDRG
+#define DC_SPRDRG_EAST
+#define DC_SPRDRG_WEST
+#define DC_SPRDRG_NORTH*/
+
 #define SPONGE
-#define EDDY_SPONGE
-#define EDDY_SPONGE_EAST
-#define EDDY_SPONGE_NORTH
-/*#define EDDY_SPONGE_SOUTH*/
-#define EDDY_SPONGE_WEST
+#define DC_SPONGE
+#define DC_SPONGE_WEST
+#define DC_SPONGE_EAST
+#define DC_SPONGE_NORTH
+/*#define DC_SPONGE_SOUTH*/
 
 /*#define TS_FIXED - diagnostic spinup*/
+
+/* Nudging options */
+/*#define M2CLIMATOLOGY
+#define M2CLM_NUDGING
+
+#define DC_NUDGING
+#define DC_NUDGE_NORTH
+#define DC_NUDGE_WEST
+#define DC_NUDGE_EAST
+/*#define DC_NUDGE_SOUTH*/
 
 /* Passive Tracer */
 #define T_PASSIVE
@@ -75,9 +90,9 @@
 /* Mixing */
 #define MIX_GEO_UV
 #define MIX_GEO_TS
-/*#define MY25_MIXING */
+/*#define MY25_MIXING
+  #define KANTHA_CLAYSON*/
 #define GLS_MIXING
-/*#define KANTHA_CLAYSON*/
 #define CANUTO_A
 
 /* Outputs */
