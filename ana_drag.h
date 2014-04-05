@@ -167,7 +167,7 @@
 # if defined DC_SPRDRG
       tokm = 1000;
       width = USER(1)*tokm
-      maxrdrg = USER(4)
+      maxrdrg = USER(6)
       XX = xl(ng)
       YY = el(ng)
       eps=1E-9

@@ -160,7 +160,7 @@
       real(r8) :: cff, cff1, cff2
 #if defined DC_SPONGE
       real(r8) :: width, eps, XX, YY
-      real(r8) :: maxdiff,maxvisc,tokm
+      real(r8) :: maxdiff2,maxdiff4,maxvisc2,maxvisc4,tokm
 #endif
 #ifdef WC13
       real(r8) :: cff_t, cff_s, cff1_t, cff2_t, cff1_s, cff2_s
@@ -252,21 +252,23 @@
       tokm = 1000
 
       width=USER(1)*tokm
-      maxvisc=USER(2)
-      maxdiff=USER(3)
+      maxvisc2=USER(2)
+      maxdiff2=USER(3)
+      maxvisc4=USER(4)
+      maxdiff4=USER(5)
       XX = xl(ng)
       YY = el(ng)
       eps=1E-9
-      
+
 !      print *,'dx = ', dx,' | sponge width = ', width
 !      print *,'maxval(xr) = ', XX
 !      print *,'maxval(yr) = ', YY
 
 #if defined UV_VIS4
-      maxvisc=sqrt(maxvisc)
+      maxvisc4=sqrt(maxvisc4)
 #endif
 #if defined TS_DIF4
-      maxdiff=sqrt(maxdiff)
+      maxdiff4=sqrt(maxdiff4)
 #endif
 
 ! cff contains value between 0 and 1 in sponge region
@@ -336,35 +338,43 @@
 
 ! assign to viscosity and diffusivity arrays
 #if defined UV_VIS2
-            visc2_r(i,j) = cff*maxvisc + visc2(ng)
-            visc2_p(i,j) = cff*maxvisc + visc2(ng)
-            IF (visc2_r(i,j) .gt. maxvisc) THEN
-               visc2_r(i,j) = maxvisc
-               visc2_p(i,j) = maxvisc
+            visc2_r(i,j) = cff*maxvisc2 + visc2(ng)
+            visc2_p(i,j) = cff*maxvisc2 + visc2(ng)
+            IF (maxvisc2 .ne. 0) THEN
+               IF (visc2_r(i,j) .gt. maxvisc2) THEN
+                  visc2_r(i,j) = maxvisc2
+                  visc2_p(i,j) = maxvisc2
+               END IF
             END IF
 #endif
 #if defined UV_VIS4
-            visc4_r(i,j) = cff*maxvisc + visc4(ng)
-            visc4_p(i,j) = cff*maxvisc + visc4(ng)
-            IF (visc4_r(i,j) .gt. maxvisc) THEN
-               visc4_r(i,j) = maxvisc
-               visc4_p(i,j) = maxvisc
+            visc4_r(i,j) = cff*maxvisc4 + visc4(ng)
+            visc4_p(i,j) = cff*maxvisc4 + visc4(ng)
+            IF (maxvisc4 .ne. 0) THEN
+               IF (visc4_r(i,j) .gt. maxvisc4) THEN
+                  visc4_r(i,j) = maxvisc4
+                  visc4_p(i,j) = maxvisc4
+               END IF
             END IF
 #endif
 #if defined TS_DIF2
-            diff2(i,j,itemp) = cff*maxdiff + tnu2(itemp,ng)
-            diff2(i,j,isalt) = cff*maxdiff + tnu2(isalt,ng)
-            IF (diff2(i,j,itemp) .gt. maxdiff) THEN
-               diff2(i,j,itemp) = maxdiff
-               diff2(i,j,isalt) = maxdiff
+            diff2(i,j,itemp) = cff*maxdiff2 + tnu2(itemp,ng)
+            diff2(i,j,isalt) = cff*maxdiff2 + tnu2(isalt,ng)
+            IF (maxdiff2 .ne. 0) THEN
+               IF (diff2(i,j,itemp) .gt. maxdiff2) THEN
+                  diff2(i,j,itemp) = maxdiff2
+                  diff2(i,j,isalt) = maxdiff2
+               END IF
             END IF
 #endif
 #if defined TS_DIF4
-            diff4(i,j,itemp) = cff*maxdiff + tnu4(itemp,ng)
-            diff4(i,j,isalt) = cff*maxdiff + tnu4(isalt,ng)
-            IF (diff4(i,j,itemp) .gt. maxdiff) THEN
-               diff4(i,j,itemp) = maxdiff
-               diff4(i,j,isalt) = maxdiff
+            diff4(i,j,itemp) = cff*maxdiff4 + tnu4(itemp,ng)
+            diff4(i,j,isalt) = cff*maxdiff4 + tnu4(isalt,ng)
+            IF (maxdiff4 .ne. 0) THEN
+               IF (diff4(i,j,itemp) .gt. maxdiff4) THEN
+                  diff4(i,j,itemp) = maxdiff4
+                  diff4(i,j,isalt) = maxdiff4
+               END IF
             END IF
 #endif
 

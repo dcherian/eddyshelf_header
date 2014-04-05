@@ -48,6 +48,8 @@
 
 #define UV_VIS2
 #define TS_DIF2
+#define UV_VIS4
+#define TS_DIF4
 #endif
 
 /*#define UV_SVADVECTION - for shallow, well resolved domains*/

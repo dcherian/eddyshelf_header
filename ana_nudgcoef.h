@@ -135,7 +135,7 @@
       ! input in km - total width of nudging region
       totwidth = USER(1)*tokm
       ! width of constant nudging region
-      nudgwidth = USER(5)*tokm
+      nudgwidth = USER(7)*tokm
       ! width of ramped region
       width = totwidth-nudgwidth
       XX = xl(ng)
