@@ -348,12 +348,19 @@
             END IF
 #endif
 #if defined UV_VIS4
-            visc4_r(i,j) = cff*maxvisc4 + visc4(ng)
-            visc4_p(i,j) = cff*maxvisc4 + visc4(ng)
-            IF (maxvisc4 .ne. 0) THEN
-               IF (visc4_r(i,j) .gt. maxvisc4) THEN
+             IF (maxvisc4 .ne. 0) THEN
+                visc4_r(i,j) = cff*maxvisc4 + visc4(ng)
+                visc4_p(i,j) = cff*maxvisc4 + visc4(ng)
+                IF (visc4_r(i,j) .gt. maxvisc4) THEN
                   visc4_r(i,j) = maxvisc4
                   visc4_p(i,j) = maxvisc4
+               END IF
+            ELSE
+               visc4_r(i,j) = maxvisc4 + (1-cff)*visc4(ng)
+               visc4_p(i,j) = maxvisc4 + (1-cff)*visc4(ng)
+               IF (visc4_p(i,j) .lt. 0) THEN
+                  visc4_p(i,j) = 0
+                  visc4_r(i,j) = 0
                END IF
             END IF
 #endif
@@ -368,12 +375,19 @@
             END IF
 #endif
 #if defined TS_DIF4
-            diff4(i,j,itemp) = cff*maxdiff4 + tnu4(itemp,ng)
-            diff4(i,j,isalt) = cff*maxdiff4 + tnu4(isalt,ng)
             IF (maxdiff4 .ne. 0) THEN
+               diff4(i,j,itemp) = cff*maxdiff4 + tnu4(itemp,ng)
+               diff4(i,j,isalt) = cff*maxdiff4 + tnu4(isalt,ng)
                IF (diff4(i,j,itemp) .gt. maxdiff4) THEN
                   diff4(i,j,itemp) = maxdiff4
                   diff4(i,j,isalt) = maxdiff4
+               END IF
+            ELSE
+               diff4(i,j,itemp) = maxdiff4 + (1-cff)*tnu4(itemp,ng)
+               diff4(i,j,isalt) = maxdiff4 + (1-cff)*tnu4(isalt,ng)
+               IF (diff4(i,j,itemp) .lt. 0) THEN
+                  diff4(i,j,itemp) = 0
+                  diff4(i,j,isalt) = 0
                END IF
             END IF
 #endif
