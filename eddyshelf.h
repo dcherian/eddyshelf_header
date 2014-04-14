@@ -17,7 +17,7 @@
 #define RADIATION_2D
 #define DJ_GRADPS
 #define PERFECT_RESTART
-#define N2S2_HORAVG
+/*#define N2S2_HORAVG*/
 #undef  NONLIN_EOS
 #undef  SALINITY
 
@@ -43,8 +43,11 @@
 
 /*#define TS_A4HADVECTION
   #define TS_A4VADVECTION*/
-#define TS_MPDATA /* Horizontal advection for T,S */
+/*#define TS_MPDATA /* Horizontal advection for T,S */
 #define UV_C3HADVECTION
+
+#define VISC_GRID
+#define DIFF_GRID
 
 #define UV_VIS2
 #define TS_DIF2
@@ -65,7 +68,7 @@
 #define DC_SPRDRG_WEST
 #define DC_SPRDRG_NORTH*/
 
-#define SPONGE
+#define ANA_SPONGE
 #define DC_SPONGE
 #define DC_SPONGE_WEST
 #define DC_SPONGE_EAST
