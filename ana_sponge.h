@@ -229,9 +229,9 @@
 ! assign to viscosity and diffusivity arrays
 #if defined UV_VIS2
             IF (LuvSponge(ng)) THEN
-            MIXING(ng)%visc2_r(i,j) = cff*maxvisc2 +                    &
+               MIXING(ng)%visc2_r(i,j) = cff*maxvisc2 +                    &
                                            MIXING(ng)%visc2_r(i,j)
-            MIXING(ng)%visc2_p(i,j) = cff*maxvisc2 +                    &
+               MIXING(ng)%visc2_p(i,j) = cff*maxvisc2 +                    &
                                            MIXING(ng)%visc2_p(i,j)
             IF (maxvisc2 .ne. 0) THEN
                IF (MIXING(ng)%visc2_r(i,j) .gt. maxvisc2) THEN
@@ -248,11 +248,11 @@
                                               MIXING(ng)%visc4_r(i,j)
                 MIXING(ng)%visc4_p(i,j) = cff*maxvisc4 +                &
                                               MIXING(ng)%visc4_p(i,j)
-               IF (MIXING(ng)%visc4_r(i,j) .gt. maxvisc4) THEN
-                  MIXING(ng)%visc4_r(i,j) = maxvisc4
-                  MIXING(ng)%visc4_p(i,j) = maxvisc4
-               END IF
-            ELSE
+                IF (MIXING(ng)%visc4_r(i,j) .gt. maxvisc4) THEN
+                   MIXING(ng)%visc4_r(i,j) = maxvisc4
+                   MIXING(ng)%visc4_p(i,j) = maxvisc4
+                END IF
+             ELSE
                !MIXING(ng)%visc4_r(i,j) = maxvisc4 +                     &
                !                          (1-cff)*MIXING(ng)%visc4_r(i,j)
                !MIXING(ng)%visc4_p(i,j) = maxvisc4 +                     &
@@ -261,7 +261,7 @@
                !   MIXING(ng)%visc4_p(i,j) = 0
                !   MIXING(ng)%visc4_r(i,j) = 0
                !END IF
-            END IF
+             END IF
             END IF
 #endif
             DO itrc=1,NT(ng)

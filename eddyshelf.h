@@ -43,7 +43,7 @@
 
 /*#define TS_A4HADVECTION
   #define TS_A4VADVECTION*/
-/*#define TS_MPDATA /* Horizontal advection for T,S */
+#define TS_MPDATA /* Horizontal advection for T,S */
 #define UV_C3HADVECTION
 
 #define VISC_GRID
@@ -93,8 +93,11 @@
 #define ANA_BPFLUX 
 
 /* Mixing */
-#define MIX_GEO_UV
-#define MIX_GEO_TS
+#define MIX_GEO_UV4
+#define MIX_GEO_TS4
+
+#define MIX_S_UV2
+#define MIX_GEO_TS2
 /*#define MY25_MIXING
   #define KANTHA_CLAYSON*/
 #define GLS_MIXING
