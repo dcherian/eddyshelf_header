@@ -17,7 +17,7 @@
 #define RADIATION_2D
 #define DJ_GRADPS
 #define PERFECT_RESTART
-/*#define N2S2_HORAVG*/
+#define N2S2_HORAVG
 #undef  NONLIN_EOS
 #undef  SALINITY
 
@@ -70,10 +70,10 @@
 
 #define ANA_SPONGE
 #define DC_SPONGE
-#define DC_SPONGE_WEST
+/*#define DC_SPONGE_WEST*/
 #define DC_SPONGE_EAST
 #define DC_SPONGE_NORTH
-/*#define DC_SPONGE_SOUTH*/
+#define DC_SPONGE_SOUTH
 
 /*#define TS_FIXED - diagnostic spinup*/
 
