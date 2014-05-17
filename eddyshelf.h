@@ -70,10 +70,10 @@
 
 #define ANA_SPONGE
 #define DC_SPONGE
-/*#define DC_SPONGE_WEST*/
+#define DC_SPONGE_WEST
 #define DC_SPONGE_EAST
 #define DC_SPONGE_NORTH
-#define DC_SPONGE_SOUTH
+/*#define DC_SPONGE_SOUTH*/
 
 /*#define TS_FIXED - diagnostic spinup*/
 
