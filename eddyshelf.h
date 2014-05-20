@@ -47,7 +47,7 @@
 #define UV_C3HADVECTION
 
 #define VISC_GRID
-#define DIFF_GRID
+/*#define DIFF_GRID*/
 
 #define UV_VIS2
 #define TS_DIF2
