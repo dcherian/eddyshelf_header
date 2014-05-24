@@ -59,9 +59,10 @@
 
 /* Viscosity & sponges */
 #define UV_LDRAG
+#define LIMIT_BSTRESS
+
 /*#define ANA_DRAG
 #define UV_DRAG_GRID
-#define LIMIT_BSTRESS
 
 #define DC_SPRDRG
 #define DC_SPRDRG_EAST
