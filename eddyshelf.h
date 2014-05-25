@@ -17,7 +17,7 @@
 #define RADIATION_2D
 #define DJ_GRADPS
 #define PERFECT_RESTART
-#define N2S2_HORAVG
+/*#define N2S2_HORAVG*/
 #undef  NONLIN_EOS
 #undef  SALINITY
 
