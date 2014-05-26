@@ -94,7 +94,7 @@
 #define ANA_BPFLUX 
 
 /* Mixing */
-#define MIX_GEO_UV4
+#define MIX_S_UV4
 #define MIX_GEO_TS4
 
 #define MIX_S_UV2
