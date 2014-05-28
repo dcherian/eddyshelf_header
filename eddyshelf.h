@@ -15,7 +15,7 @@
 #define UV_ADV
 #define UV_COR
 #define RADIATION_2D
-#define DJ_GRADPS
+#define WJ_GRADP
 #define PERFECT_RESTART
 /*#define N2S2_HORAVG*/
 #undef  NONLIN_EOS
@@ -94,8 +94,8 @@
 #define ANA_BPFLUX 
 
 /* Mixing */
-#define MIX_S_UV4
-#define MIX_S_TS4
+#define MIX_GEO_UV4
+#define MIX_GEO_TS4
 
 #define MIX_S_UV2
 #define MIX_GEO_TS2
