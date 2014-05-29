@@ -15,7 +15,7 @@
 #define UV_ADV
 #define UV_COR
 #define RADIATION_2D
-#define WJ_GRADP
+#define DJ_GRADPS
 #define PERFECT_RESTART
 /*#define N2S2_HORAVG*/
 #undef  NONLIN_EOS
@@ -46,9 +46,9 @@
 #define TS_MPDATA /* Horizontal advection for T,S */
 #define UV_C3HADVECTION
 
-#define VISC_GRID
+/*#define VISC_GRID
 #define DIFF_GRID
-
+*/
 #define UV_VIS2
 #define TS_DIF2
 #define UV_VIS4
@@ -94,7 +94,7 @@
 #define ANA_BPFLUX 
 
 /* Mixing */
-#define MIX_GEO_UV4
+#define MIX_S_UV4
 #define MIX_GEO_TS4
 
 #define MIX_S_UV2
