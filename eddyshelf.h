@@ -12,6 +12,8 @@
 #define ANA_SSFLUX
 #define ANA_BSFLUX
 
+#define SALINITY
+
 #define UV_ADV
 #define UV_COR
 #define RADIATION_2D
