@@ -23,6 +23,8 @@
 #undef  NONLIN_EOS
 #undef  SALINITY
 
+#define RST_TIME
+
 /* FLOATS */
 #define FLOATS
 #define FLOAT_VWALK
